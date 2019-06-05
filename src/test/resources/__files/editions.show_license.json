@@ -1,0 +1,10 @@
+{
+    "maxLoc": 10000000,
+    "loc": 9000000,
+    "plugins": [
+        "Analysis of Java",
+        "Analysis of JavaScript"
+    ],
+    "contactEmail": "contact@sonarsource.com",
+    "remainingLocThreshold": 500000
+}

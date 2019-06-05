@@ -1,0 +1,100 @@
+{
+  "paging": {
+    "pageIndex": 1,
+    "pageSize": 500,
+    "total": 9
+  },
+  "components": [
+    {
+      "organization": "default-organization",
+      "id": "AVxxxxxxxxxxxxxxxxx1",
+      "key": "com.company:project1",
+      "name": "Mock project 1",
+      "isFavorite": false,
+      "analysisDate": "2017-01-03T15:55:10+0100",
+      "tags": [],
+      "visibility": "private"
+    },
+    {
+      "organization": "default-organization",
+      "id": "AVxxxxxxxxxxxxxxxxx2",
+      "key": "com.company:project2",
+      "name": "Mock project 2",
+      "isFavorite": false,
+      "analysisDate": "2017-01-05T01:15:58+0100",
+      "tags": [],
+      "visibility": "private"
+    },
+    {
+      "organization": "default-organization",
+      "id": "AVxxxxxxxxxxxxxxxxx3",
+      "key": "com.company:project3",
+      "name": "Mock project 3",
+      "isFavorite": false,
+      "analysisDate": "2017-01-05T01:15:59+0100",
+      "tags": [],
+      "visibility": "private"
+    },
+    {
+      "organization": "default-organization",
+      "id": "AVxxxxxxxxxxxxxxxxx4",
+      "key": "com.company:project4",
+      "name": "Mock project 4",
+      "isFavorite": false,
+      "analysisDate": "2017-01-05T01:16:15+0100",
+      "tags": [],
+      "visibility": "private"
+    },
+    {
+      "organization": "default-organization",
+      "id": "AVxxxxxxxxxxxxxxxxx5",
+      "key": "com.company:project5",
+      "name": "Mock project 1",
+      "isFavorite": false,
+      "analysisDate": "2017-01-05T01:16:16+0100",
+      "tags": [],
+      "visibility": "private"
+    },
+    {
+      "organization": "default-organization",
+      "id": "AVxxxxxxxxxxxxxxxxx6",
+      "key": "com.company:project6",
+      "name": "Mock project 6",
+      "isFavorite": false,
+      "analysisDate": "2017-01-06T10:55:32+0100",
+      "tags": [],
+      "visibility": "private"
+    },
+    {
+      "organization": "default-organization",
+      "id": "AVxxxxxxxxxxxxxxxxx7",
+      "key": "com.company:project7",
+      "name": "Mock project 7",
+      "isFavorite": false,
+      "analysisDate": "2017-01-06T17:33:05+0100",
+      "tags": [],
+      "visibility": "private"
+    },
+    {
+      "organization": "default-organization",
+      "id": "AVxxxxxxxxxxxxxxxxx8",
+      "key": "com.company:project8",
+      "name": "Mock project 8",
+      "isFavorite": false,
+      "analysisDate": "2017-01-06T20:21:10+0100",
+      "tags": [],
+      "visibility": "private"
+    },
+    {
+      "organization": "default-organization",
+      "id": "AVxxxxxxxxxxxxxxxxx9",
+      "key": "com.company:project9",
+      "name": "Mock project 9",
+      "isFavorite": false,
+      "analysisDate": "2017-01-08T19:02:54+0100",
+      "tags": [],
+      "visibility": "private"
+    }
+  ],
+  "facets": []
+}

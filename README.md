@@ -33,7 +33,7 @@ usage: sonarqube-cleanup-cli
 
 The goal of this program is to delete old SonarQube projects, before the total lines of code authorized by license is reached.
 
-When the [threshold](https://docs.sonarqube.org/display/PLUG/License+Manager+Plugin) is reached (~6% of total LOC by default), a email is sent to administrators.
+When the [threshold](https://docs.sonarqube.org/display/PLUG/License+Manager+Plugin) is reached (~6% of total LoC by default), a email is sent to administrators.
 
 Two options can be configured to customize behavior, depends the needs ; mainly manual or batch/cron/daily execution.
 

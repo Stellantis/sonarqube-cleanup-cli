@@ -24,7 +24,7 @@ deploy:
     # master deployment
   - provider: bintray
     file: bintray-descriptor.json
-    user: groupepsa
+    user: $BINTRAY_USER
     key: $BINTRAY_API_KEY
     skip_cleanup: true
     on:
@@ -32,7 +32,7 @@ deploy:
     # Tag deployment
   - provider: bintray
     file: bintray-descriptor.json
-    user: groupepsa
+    user: $BINTRAY_USER
     key: $BINTRAY_API_KEY
     skip_cleanup: true
     on:

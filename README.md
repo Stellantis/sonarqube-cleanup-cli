@@ -1,13 +1,17 @@
 
+[![Build Status](https://travis-ci.org/psa/sonarqube-cleanup-cli.svg?branch=master)](https://travis-ci.org/psa/sonarqube-cleanup-cli) [![SonarCloud Status](https://sonarcloud.io/api/project_badges/measure?project=org.psa%3Asonarqube-cleanup-cli&metric=alert_status)](https://sonarcloud.io/dashboard?id=org.psa%3Asonarqube-cleanup-cli) [ ![Download](https://api.bintray.com/packages/groupepsa/generic/sonarqube-cleanup-cli/images/download.svg) ](https://bintray.com/groupepsa/generic/sonarqube-cleanup-cli/_latestVersion#files) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Development version: [ ![download](https://api.bintray.com/packages/groupepsa/generic-dev/sonarqube-cleanup-cli/images/download.svg) ](https://bintray.com/groupepsa/generic-dev/sonarqube-cleanup-cli/_latestVersion#files)
+
 # SonarQube old projects Cleanup command line client
 
-This is a java cli program to remove old [SonarQube](https://www.sonarqube.org/) projects, to keep the total number of lines of code below that allowed by the license.
+This is a simple java cli program to remove old [SonarQube](https://www.sonarqube.org/) projects, to keep the total number of lines of code below that allowed by the license.
 
 ## Usage
 
 *Prerequisite: [java](https://www.java.com/fr/download/) should be installed and on your PATH.*
 
-Execute `java -jar sonarqube-cleanup-cli-x.y.jar -h http://sonarqube.company.com -l adminUser -p foobar`
+Extract ZIP file depending your environment system, run `sonarqube-cleanup-cli.bat` (Windows) or `sonarqube-cleanup-cli.sh` (Linux) with options.
+
+At min `sonarqube-cleanup-cli.[sh|bat] -h http://sonarqube.company.com -l adminUser -p foobar`
 
 Options: 
 
@@ -53,4 +57,21 @@ The combination of both could be done. Think to configure the threshold in `http
 
 SonarQube **v6.2**, due to [api/components/search_projects](https://sonarcloud.io/web_api/api/components/search_projects?internal=true) usage.
 
+## Development process
 
+This project is using [Maven](https://maven.apache.org/) as integration tool.
+
+For development/SNAPSHOT build, use:
+
+```
+mvn package
+```
+
+For release build, use (you will have to fill your GitHub credentials):
+```
+git reset --hard origin/master 
+git branch -m next-version 
+mvn clean release:clean release:prepare
+```
+
+After that, you would have to create pull-request from `next-version` branch and rebase it on master for next version development.

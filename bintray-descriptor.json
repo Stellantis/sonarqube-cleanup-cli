@@ -1,0 +1,33 @@
+{
+    "package": {
+        "subject": "groupepsa",
+        "repo": "generic",
+        "name": "sonarqube-cleanup-cli",
+        "desc": "SonarQube old projects Cleanup command line client",
+        "website_url": "https://github.com/GroupePSA/sonarqube-cleanup-cli",
+        "issue_tracker_url": "https://github.com/GroupePSA/sonarqube-cleanup-cli/issues",
+        "vcs_url": "https://github.com/GroupePSA/sonarqube-cleanup-cli.git",
+        "licenses": [
+            "GPL-3.0"
+        ],
+        "labels": [
+            "SonarQube",
+            "cleanup"
+        ],
+        "public_download_numbers": true,
+        "public_stats": true
+    },
+    "version": {
+        "name": "VERSION_TO_UPDATE"
+    },
+    "files": [
+        {
+            "includePattern": "target/(sonarqube-cleanup-cli-.*.zip)",
+            "uploadPattern": "$1",
+            "matrixParams": {
+                "override": 1
+            }
+        }
+    ],
+    "publish": true
+}

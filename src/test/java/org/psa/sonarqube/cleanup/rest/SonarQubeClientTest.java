@@ -20,6 +20,17 @@ public class SonarQubeClientTest extends AbstractWireMock {
     private static final String PROJECT_KEY = "com.company:project1";
 
     @Test
+    public void testNoUrl() {
+        try {
+            SonarQubeClient client = new SonarQubeClient();
+            client.getLicence();
+            Assert.fail("URL not set");
+        } catch (UnsupportedOperationException e) {
+            Assert.assertTrue(e.getMessage().contains("Please use 'setUrl(...)' before using this client"));
+        }
+    }
+
+    @Test
     public void testShowLicence() {
         stubFor(get("/api/editions/show_license").willReturn(aResponse().withHeader(HCTKEY, HCTJSON).withBodyFile("editions.show_license.json")));
         SonarQubeClient client = mockClient();

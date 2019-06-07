@@ -7,10 +7,13 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static org.junit.contrib.java.lang.system.TextFromStandardInputStream.emptyStandardInputStream;
 
 import javax.ws.rs.core.Response;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.TextFromStandardInputStream;
 
 public class SonarQubeCleanupCliTest extends AbstractWireMock {
 
@@ -20,6 +23,9 @@ public class SonarQubeCleanupCliTest extends AbstractWireMock {
 
     private static final String LOCALHOST = "http://localhost:";
     private static final String USER = "admin";
+
+    @Rule
+    public final TextFromStandardInputStream systemInMock = emptyStandardInputStream();
 
     @Test
     public void testNoLineToReach() {
@@ -39,6 +45,28 @@ public class SonarQubeCleanupCliTest extends AbstractWireMock {
         verify(1, anyRequestedFor(urlMatching(URL_COMPONENTS_SEARCH_PROJECTS)));
         verify(1, anyRequestedFor(urlMatching(URL_MEASURES_COMPONENTS)));
         verify(1, anyRequestedFor(urlMatching(URL_PROJECTS_DELETE)));
+    }
+
+    @Test
+    public void testOneProjectDeletionWithYes() {
+        mockEndoints();
+        systemInMock.provideLines("y");
+        SonarQubeCleanupCli.main(new String[] { "-h", LOCALHOST + server.port(), "-l", USER, "-n", "1" });
+
+        verify(1, anyRequestedFor(urlMatching(URL_COMPONENTS_SEARCH_PROJECTS)));
+        verify(1, anyRequestedFor(urlMatching(URL_MEASURES_COMPONENTS)));
+        verify(1, anyRequestedFor(urlMatching(URL_PROJECTS_DELETE)));
+    }
+
+    @Test
+    public void testOneProjectDeletionWithNo() {
+        mockEndoints();
+        systemInMock.provideLines("N");
+        SonarQubeCleanupCli.main(new String[] { "-h", LOCALHOST + server.port(), "-l", USER, "-n", "1" });
+
+        verify(1, anyRequestedFor(urlMatching(URL_COMPONENTS_SEARCH_PROJECTS)));
+        verify(1, anyRequestedFor(urlMatching(URL_MEASURES_COMPONENTS)));
+        verify(0, anyRequestedFor(urlMatching(URL_PROJECTS_DELETE)));
     }
 
     @Test

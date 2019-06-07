@@ -28,13 +28,17 @@ public class SonarQubeCleanupCliTest extends AbstractWireMock {
     public final TextFromStandardInputStream systemInMock = emptyStandardInputStream();
 
     @Test
+    public void testConstructor() {
+        new SonarQubeCleanupCli(); // NOSONAR : For better code-coverage
+    }
+
+    @Test
     public void testNoLineToReach() {
         mockEndoints();
         SonarQubeCleanupCli.main(new String[] { "-h", LOCALHOST + server.port(), "-l", USER });
 
         verify(0, anyRequestedFor(urlMatching(URL_COMPONENTS_SEARCH_PROJECTS)));
         verify(0, anyRequestedFor(urlMatching(URL_MEASURES_COMPONENTS)));
-
     }
 
     @Test

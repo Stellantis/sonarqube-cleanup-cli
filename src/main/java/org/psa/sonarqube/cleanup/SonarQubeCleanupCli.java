@@ -63,7 +63,7 @@ public class SonarQubeCleanupCli {
             LOG.info("Deleting project: {}", k);
             client.deleteProject(k);
         }
-
+        LOG.info("Deletion done, exit.");
     }
 
 }

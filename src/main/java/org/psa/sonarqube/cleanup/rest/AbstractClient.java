@@ -9,12 +9,15 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.glassfish.jersey.message.internal.FormProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +26,8 @@ public abstract class AbstractClient {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractClient.class);
 
     private String url;
+
+    private String xsrfToken;
 
     protected AbstractClient() {
         super();
@@ -34,6 +39,10 @@ public abstract class AbstractClient {
 
     protected <T> T get(String path, Class<T> entityResponse) {
         return get(path, null, entityResponse);
+    }
+
+    protected <T> T get(String path, Class<T> entityResponse, boolean wrapRoot) {
+        return call(path, null, null, entityResponse, wrapRoot);
     }
 
     protected <T> T get(String path, MultivaluedMap<String, Object> headers, Class<T> entityResponse) {
@@ -64,6 +73,7 @@ public abstract class AbstractClient {
             if (wrapRoot) {
                 client = client.register(ObjectMapperContextResolver.class);
             }
+            client.register(FormProvider.class);
 
             // Manage query parameters for correct encoding
             String pathNoParams = path;
@@ -79,14 +89,14 @@ public abstract class AbstractClient {
                 }
             }
 
-            Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON).headers(headers);
+            Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON_TYPE).headers(addXsrfTokenToHeaders(headers));
             Response response = null;
             if (entityRequest == null) {
                 response = invocationBuilder.get();
             } else {
-                response = invocationBuilder.post(Entity.entity(entityRequest, MediaType.APPLICATION_JSON));
+                response = invocationBuilder.post(Entity.entity(entityRequest, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
             }
-            if (Response.Status.OK.getStatusCode() != response.getStatus()) {
+            if (Response.Status.OK.getStatusCode() != response.getStatus() && Response.Status.NO_CONTENT.getStatusCode() != response.getStatus()) {
                 String content = IOUtils.toString((InputStream) response.getEntity(), Charset.defaultCharset());
                 if (StringUtils.isNoneBlank(content)) {
                     content = " / Content: " + content;
@@ -94,12 +104,31 @@ public abstract class AbstractClient {
                 throw new UnsupportedOperationException(
                         String.format("Unsupported status code: %s %s%s", response.getStatus(), response.getStatusInfo().getReasonPhrase(), content));
             }
+            storeXsrfToken(response);
             return response.readEntity(entityResponse);
         } catch (IOException e) {
             throw new UnsupportedOperationException(e);
         } finally {
             LOG.debug("Call URL time elaps ms: {}", System.currentTimeMillis() - start);
         }
+    }
+
+    private void storeXsrfToken(Response response) {
+        Cookie token = response.getCookies().get("XSRF-TOKEN");
+        if (token != null && StringUtils.isNotBlank(token.getValue())) {
+            xsrfToken = token.getValue();
+        }
+    }
+
+    private MultivaluedMap<String, Object> addXsrfTokenToHeaders(MultivaluedMap<String, Object> headers) {
+        MultivaluedMap<String, Object> headersWithToken = headers;
+        if (StringUtils.isNotBlank(xsrfToken)) {
+            if (headersWithToken == null) {
+                headersWithToken = new MultivaluedHashMap<>();
+            }
+            headersWithToken.add("X-XSRF-TOKEN", xsrfToken);
+        }
+        return headersWithToken;
     }
 
 }

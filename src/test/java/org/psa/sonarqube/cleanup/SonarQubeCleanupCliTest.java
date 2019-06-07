@@ -8,18 +8,23 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 
+import javax.ws.rs.core.Response;
+
 import org.junit.Test;
 
 public class SonarQubeCleanupCliTest extends AbstractWireMock {
 
     private static final String URL_COMPONENTS_SEARCH_PROJECTS = "/api/components/search_projects.*";
     private static final String URL_MEASURES_COMPONENTS = "/api/measures/component.*";
-    private static final String URL_PROJECTS_DELETE = "/api/projects/delete.*";
+    private static final String URL_PROJECTS_DELETE = "/api/projects/delete";
+
+    private static final String LOCALHOST = "http://localhost:";
+    private static final String USER = "admin";
 
     @Test
     public void testNoLineToReach() {
         mockEndoints();
-        SonarQubeCleanupCli.main(new String[] { "-h", "http://localhost:" + server.port(), "-l", "admin" });
+        SonarQubeCleanupCli.main(new String[] { "-h", LOCALHOST + server.port(), "-l", USER });
 
         verify(0, anyRequestedFor(urlMatching(URL_COMPONENTS_SEARCH_PROJECTS)));
         verify(0, anyRequestedFor(urlMatching(URL_MEASURES_COMPONENTS)));
@@ -29,7 +34,7 @@ public class SonarQubeCleanupCliTest extends AbstractWireMock {
     @Test
     public void testOneProjectDeletion() {
         mockEndoints();
-        SonarQubeCleanupCli.main(new String[] { "-h", "http://localhost:" + server.port(), "-l", "admin", "-y", "-n", "1" });
+        SonarQubeCleanupCli.main(new String[] { "-h", LOCALHOST + server.port(), "-l", USER, "-y", "-n", "1" });
 
         verify(1, anyRequestedFor(urlMatching(URL_COMPONENTS_SEARCH_PROJECTS)));
         verify(1, anyRequestedFor(urlMatching(URL_MEASURES_COMPONENTS)));
@@ -39,7 +44,7 @@ public class SonarQubeCleanupCliTest extends AbstractWireMock {
     @Test
     public void testTwoProjectDeletion() {
         mockEndoints();
-        SonarQubeCleanupCli.main(new String[] { "-h", "http://localhost:" + server.port(), "-l", "admin", "-y", "-n", "2000" });
+        SonarQubeCleanupCli.main(new String[] { "-h", LOCALHOST + server.port(), "-l", USER, "-y", "-n", "2000" });
 
         verify(1, anyRequestedFor(urlMatching(URL_COMPONENTS_SEARCH_PROJECTS)));
         verify(2, anyRequestedFor(urlMatching(URL_MEASURES_COMPONENTS)));
@@ -49,7 +54,7 @@ public class SonarQubeCleanupCliTest extends AbstractWireMock {
     @Test
     public void testAllProjectDeletion() {
         mockEndoints();
-        SonarQubeCleanupCli.main(new String[] { "-h", "http://localhost:" + server.port(), "-l", "admin", "-y", "-n", "10000000" });
+        SonarQubeCleanupCli.main(new String[] { "-h", LOCALHOST + server.port(), "-l", USER, "-y", "-n", "10000000" });
 
         verify(1, anyRequestedFor(urlMatching(URL_COMPONENTS_SEARCH_PROJECTS)));
         verify(9, anyRequestedFor(urlMatching(URL_MEASURES_COMPONENTS)));
@@ -59,7 +64,7 @@ public class SonarQubeCleanupCliTest extends AbstractWireMock {
     @Test
     public void testDryRun() {
         mockEndoints();
-        SonarQubeCleanupCli.main(new String[] { "-h", "http://localhost:" + server.port(), "-l", "admin", "-y", "-d", "-n", "1" });
+        SonarQubeCleanupCli.main(new String[] { "-h", LOCALHOST + server.port(), "-l", USER, "-y", "-d", "-n", "1" });
 
         verify(1, anyRequestedFor(urlMatching(URL_COMPONENTS_SEARCH_PROJECTS)));
         verify(1, anyRequestedFor(urlMatching(URL_MEASURES_COMPONENTS)));
@@ -72,6 +77,6 @@ public class SonarQubeCleanupCliTest extends AbstractWireMock {
                 .willReturn(aResponse().withHeader(HCTKEY, HCTJSON).withBodyFile("components.search_projects.json")));
         stubFor(get(urlMatching(URL_MEASURES_COMPONENTS))
                 .willReturn(aResponse().withHeader(HCTKEY, HCTJSON).withBodyFile("measures.component.1.json")));
-        stubFor(post(urlMatching(URL_PROJECTS_DELETE)));
+        stubFor(post(urlMatching(URL_PROJECTS_DELETE)).willReturn(aResponse().withStatus(Response.Status.NO_CONTENT.getStatusCode())));
     }
 }

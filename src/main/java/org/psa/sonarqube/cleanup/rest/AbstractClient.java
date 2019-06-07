@@ -37,14 +37,6 @@ public abstract class AbstractClient {
         this.url = url;
     }
 
-    protected <T> T get(String path, Class<T> entityResponse) {
-        return get(path, null, entityResponse);
-    }
-
-    protected <T> T get(String path, Class<T> entityResponse, boolean wrapRoot) {
-        return call(path, null, null, entityResponse, wrapRoot);
-    }
-
     protected <T> T get(String path, MultivaluedMap<String, Object> headers, Class<T> entityResponse) {
         return call(path, headers, null, entityResponse, false);
     }

@@ -42,7 +42,7 @@ public class Component {
     }
 
     public long getNcloc() {
-        if (this.measures != null && !this.measures.isEmpty()) {
+        if (getMeasures() != null && !getMeasures().isEmpty()) {
             for (Measure m : getMeasures()) {
                 if ("ncloc".equals(m.getMetric())) {
                     return m.getValue();

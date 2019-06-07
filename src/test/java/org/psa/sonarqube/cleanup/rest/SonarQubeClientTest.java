@@ -1,11 +1,17 @@
 package org.psa.sonarqube.cleanup.rest;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.anyRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 
 import java.util.Date;
+
+import javax.ws.rs.core.Response;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -18,6 +24,46 @@ import org.psa.sonarqube.cleanup.rest.model.SearchProjects;
 public class SonarQubeClientTest extends AbstractWireMock {
 
     private static final String PROJECT_KEY = "com.company:project1";
+
+    @Test
+    public void testStrangeToken() {
+        stubFor(post(URL_AUTHENT).willReturn(aResponse().withHeader("Set-Cookie", "XSRF-TOKEN=")));
+        mockClient();
+        verify(1, anyRequestedFor(urlMatching(URL_AUTHENT)));
+    }
+
+    @Test
+    public void testHeaderNull() {
+        final String urlLicense = "/api/editions/show_license";
+        stubFor(get(urlLicense).willReturn(aResponse().withHeader(HCTKEY, HCTJSON).withBodyFile("editions.show_license.json")));
+        SonarQubeClient client = mockClient();
+        // Force header null to verify correct behavior
+        client.get(urlLicense, null, License.class);
+        verify(1, anyRequestedFor(urlMatching(URL_AUTHENT)));
+        verify(1, anyRequestedFor(urlMatching(urlLicense)));
+    }
+
+    @Test
+    public void testBadAuth() {
+        stubFor(post(URL_AUTHENT).willReturn(aResponse().withStatus(Response.Status.UNAUTHORIZED.getStatusCode())));
+        try {
+            mockClient();
+            Assert.fail("Bad password");
+        } catch (UnsupportedOperationException e) {
+            Assert.assertTrue(e.getMessage().contains("401 Unauthorized"));
+        }
+    }
+
+    @Test
+    public void testBadAuthWithFakeContent() {
+        stubFor(post(URL_AUTHENT).willReturn(aResponse().withStatus(Response.Status.UNAUTHORIZED.getStatusCode()).withBody("Invalid password")));
+        try {
+            mockClient();
+            Assert.fail("Bad password");
+        } catch (UnsupportedOperationException e) {
+            Assert.assertTrue(e.getMessage().contains("401 Unauthorized"));
+        }
+    }
 
     @Test
     public void testNoUrl() {

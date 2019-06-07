@@ -15,6 +15,10 @@ public class SonarQubeCleanupCli {
 
     private static final Logger LOG = LoggerFactory.getLogger(SonarQubeCleanupCli.class);
 
+    SonarQubeCleanupCli() {
+        super();
+    }
+
     public static void main(String[] args) {
         Config config = new Config(args);
         LOG.info("Connecting to        : {} (user: {})", config.getHostUrl(), config.getLogin());

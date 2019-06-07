@@ -64,7 +64,21 @@ public abstract class AbstractClient {
             if (wrapRoot) {
                 client = client.register(ObjectMapperContextResolver.class);
             }
-            WebTarget webTarget = client.target(url).path(path);
+
+            // Manage query parameters for correct encoding
+            String pathNoParams = path;
+            int separator = pathNoParams.indexOf('?');
+            if (separator > 0) {
+                pathNoParams = pathNoParams.substring(0, separator);
+            }
+            WebTarget webTarget = client.target(url).path(pathNoParams);
+            if (separator > 0) {
+                for (String p : path.substring(separator + 1).split("&")) {
+                    int equal = p.indexOf('=');
+                    webTarget = webTarget.queryParam(p.substring(0, equal), p.substring(equal + 1));
+                }
+            }
+
             Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON).headers(headers);
             Response response = null;
             if (entityRequest == null) {

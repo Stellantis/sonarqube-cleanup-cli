@@ -3,7 +3,7 @@ package org.psa.sonarqube.cleanup.rest;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 
 import java.util.Date;
 
@@ -30,7 +30,7 @@ public class SonarQubeClientTest extends AbstractWireMock {
 
     @Test
     public void testSearchProjects() {
-        stubFor(get(urlMatching("/api/components/search_projects.*"))
+        stubFor(get(urlEqualTo("/api/components/search_projects?ps=500&f=analysisDate&s=analysisDate"))
                 .willReturn(aResponse().withHeader(HCTKEY, HCTJSON).withBodyFile("components.search_projects.json")));
         SonarQubeClient client = mockClient();
         SearchProjects searchProjects = client.getProjectsOldMax500();
@@ -46,7 +46,7 @@ public class SonarQubeClientTest extends AbstractWireMock {
 
     @Test
     public void testComponentDetail() {
-        stubFor(get(urlMatching("/api/measures/component.*"))
+        stubFor(get(urlEqualTo("/api/measures/component?metricKeys=ncloc&componentKey=com.company%3Aproject1"))
                 .willReturn(aResponse().withHeader(HCTKEY, HCTJSON).withBodyFile("measures.component.1.json")));
         SonarQubeClient client = mockClient();
         Component project = client.getProject("com.company:project1");

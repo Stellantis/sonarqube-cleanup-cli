@@ -17,6 +17,8 @@ import org.psa.sonarqube.cleanup.rest.model.SearchProjects;
 
 public class SonarQubeClientTest extends AbstractWireMock {
 
+    private static final String PROJECT_KEY = "com.company:project1";
+
     @Test
     public void testShowLicence() {
         stubFor(get("/api/editions/show_license").willReturn(aResponse().withHeader(HCTKEY, HCTJSON).withBodyFile("editions.show_license.json")));
@@ -49,9 +51,9 @@ public class SonarQubeClientTest extends AbstractWireMock {
         stubFor(get(urlEqualTo("/api/measures/component?metricKeys=ncloc&componentKey=com.company%3Aproject1"))
                 .willReturn(aResponse().withHeader(HCTKEY, HCTJSON).withBodyFile("measures.component.1.json")));
         SonarQubeClient client = mockClient();
-        Component project = client.getProject("com.company:project1");
+        Component project = client.getProject(PROJECT_KEY);
         Assert.assertEquals("AVxxxxxxxxxxxxxxxxx1", project.getId());
-        Assert.assertEquals("com.company:project1", project.getKey());
+        Assert.assertEquals(PROJECT_KEY, project.getKey());
         Assert.assertEquals("Mock project 1", project.getName());
         Assert.assertEquals("Mock project 1 description", project.getDescription());
         Assert.assertEquals(1042, project.getNcloc());
@@ -62,9 +64,9 @@ public class SonarQubeClientTest extends AbstractWireMock {
         stubFor(get(urlEqualTo("/api/measures/component?metricKeys=ncloc&componentKey=com.company%3Aproject1"))
                 .willReturn(aResponse().withHeader(HCTKEY, HCTJSON).withBodyFile("measures.component.0.json")));
         SonarQubeClient client = mockClient();
-        Component project = client.getProject("com.company:project1");
+        Component project = client.getProject(PROJECT_KEY);
         Assert.assertEquals("AVxxxxxxxxxxxxxxxxx1", project.getId());
-        Assert.assertEquals("com.company:project1", project.getKey());
+        Assert.assertEquals(PROJECT_KEY, project.getKey());
         Assert.assertEquals("Mock project 1", project.getName());
         Assert.assertEquals("Mock project 1 description", project.getDescription());
         Assert.assertEquals(0, project.getNcloc());

@@ -3,6 +3,7 @@ package org.psa.sonarqube.cleanup.rest;
 
 import java.util.Base64;
 
+import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 
@@ -22,8 +23,13 @@ public class SonarQubeClient extends AbstractClient {
     public static SonarQubeClient build(Config config) {
         SonarQubeClient client = new SonarQubeClient();
         client.setUrl(config.getHostUrl());
+        // Some API requires basicAuth (api/editions/show_license, api/measures/component), some other X-XSRF-TOKEN (api/projects/delete), so use both
         String lp = config.getLogin() + ":" + config.getPassword();
         client.setAuthorization("Basic " + Base64.getEncoder().encodeToString(lp.getBytes()));
+        Form form = new Form();
+        form.param("login", config.getLogin());
+        form.param("password", config.getPassword());
+        client.post("api/authentication/login", form, String.class);
         return client;
     }
 
@@ -48,7 +54,9 @@ public class SonarQubeClient extends AbstractClient {
 
     public void deleteProject(String key) {
         // 'api/projects/bulk_delete' not used because could be a little bit dangerous ...
-        post("api/projects/delete?key=" + key, getHeadersAuthorization(), String.class);
+        Form form = new Form();
+        form.param("project", key);
+        post("api/projects/delete", getHeadersAuthorization(), form, String.class);
     }
 
 }

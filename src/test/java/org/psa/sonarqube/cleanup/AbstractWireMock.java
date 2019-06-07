@@ -1,7 +1,11 @@
 package org.psa.sonarqube.cleanup;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 
+import org.junit.Before;
 import org.junit.Rule;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
@@ -14,4 +18,8 @@ public abstract class AbstractWireMock {
     @Rule
     public WireMockRule server = new WireMockRule(options().dynamicPort().portNumber());
 
+    @Before
+    public void setUp() {
+        stubFor(post("/api/authentication/login").willReturn(aResponse().withHeader("Set-Cookie", "XSRF-TOKEN=xxx")));
+    }
 }

@@ -49,6 +49,6 @@ public class Component {
                 }
             }
         }
-        throw new UnsupportedOperationException(String.format("No ncloc metric for project: %s", getKey()));
+        return 0;
     }
 }

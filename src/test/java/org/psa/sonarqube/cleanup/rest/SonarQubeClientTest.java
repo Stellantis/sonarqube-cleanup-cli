@@ -57,6 +57,19 @@ public class SonarQubeClientTest extends AbstractWireMock {
         Assert.assertEquals(1042, project.getNcloc());
     }
 
+    @Test
+    public void testComponentDetailNoLoC() {
+        stubFor(get(urlEqualTo("/api/measures/component?metricKeys=ncloc&componentKey=com.company%3Aproject1"))
+                .willReturn(aResponse().withHeader(HCTKEY, HCTJSON).withBodyFile("measures.component.0.json")));
+        SonarQubeClient client = mockClient();
+        Component project = client.getProject("com.company:project1");
+        Assert.assertEquals("AVxxxxxxxxxxxxxxxxx1", project.getId());
+        Assert.assertEquals("com.company:project1", project.getKey());
+        Assert.assertEquals("Mock project 1", project.getName());
+        Assert.assertEquals("Mock project 1 description", project.getDescription());
+        Assert.assertEquals(0, project.getNcloc());
+    }
+
     private SonarQubeClient mockClient() {
         Config config = new Config(new String[] { "-h", "http://localhost:" + server.port(), "-l", "admin" });
         return SonarQubeClient.build(config);

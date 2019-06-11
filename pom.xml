@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.psa</groupId>
     <artifactId>sonarqube-cleanup-cli</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT</version>
     <name>SonarQube Cleanup cli</name>
     <description>SonarQube old projects Cleanup command line client</description>
     <properties>

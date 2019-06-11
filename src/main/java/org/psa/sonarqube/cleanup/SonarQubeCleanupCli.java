@@ -21,7 +21,7 @@ public class SonarQubeCleanupCli {
 
     public static void main(String[] args) {
         Config config = new Config(args);
-        LOG.info("Connecting to        : {} (user: {})", config.getHostUrl(), config.getLogin());
+        LOG.info("Connecting to        : {} (user: {})", config.getHostUrl(), getUserOrHideToken(config.getLogin()));
         SonarQubeClient client = SonarQubeClient.build(config);
         License license = client.getLicence();
         LOG.info("License information  : maxLoc={} / loc={} / threshold={}", license.getMaxLoc(), license.getLoc(),
@@ -68,6 +68,13 @@ public class SonarQubeCleanupCli {
             client.deleteProject(k);
         }
         LOG.info("Deletion done, exit.");
+    }
+
+    private static String getUserOrHideToken(String user) {
+        if (user.length() < Constant.USER_TOKEN_LENGTH_MIN) {
+            return user;
+        }
+        return "[tokenRemoved]";
     }
 
 }

@@ -8,7 +8,6 @@ import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.commons.lang3.StringUtils;
-import org.psa.sonarqube.cleanup.Constant;
 import org.psa.sonarqube.cleanup.config.Config;
 import org.psa.sonarqube.cleanup.rest.model.Component;
 import org.psa.sonarqube.cleanup.rest.model.License;
@@ -29,7 +28,7 @@ public class SonarQubeClient extends AbstractClient {
         String password = StringUtils.defaultIfBlank(config.getPassword(), "");
         String lp = config.getLogin() + ":" + password;
         client.setAuthorization("Basic " + Base64.getEncoder().encodeToString(lp.getBytes()));
-        if (config.getLogin().length() < Constant.USER_TOKEN_LENGTH_MIN) {
+        if (!config.isLoginUserToken()) {
             Form form = new Form();
             form.param("login", config.getLogin());
             form.param("password", password);

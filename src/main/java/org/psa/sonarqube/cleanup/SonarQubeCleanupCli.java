@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import org.apache.commons.lang3.StringUtils;
 import org.psa.sonarqube.cleanup.config.Config;
 import org.psa.sonarqube.cleanup.rest.SonarQubeClient;
 import org.psa.sonarqube.cleanup.rest.model.Component;
@@ -21,7 +22,8 @@ public class SonarQubeCleanupCli {
 
     public static void main(String[] args) {
         Config config = new Config(args);
-        LOG.info("Connecting to        : {} (user: {})", config.getHostUrl(), getUserOrHideToken(config.getLogin()));
+        LOG.info("Connecting to        : {} (user: {})", config.getHostUrl(), config.getLoginForDisplay());
+        completeConfigWithInputPassword(config);
         SonarQubeClient client = SonarQubeClient.build(config);
         License license = client.getLicence();
         LOG.info("License information  : maxLoc={} / loc={} / threshold={}", license.getMaxLoc(), license.getLoc(),
@@ -55,12 +57,9 @@ public class SonarQubeCleanupCli {
         LOG.info("\n{} project(s) will be deleted ...", projectKeys.size());
         if (!config.isYes()) {
             LOG.info("Please confirm: [y/Y]");
-            try (Scanner input = new Scanner(System.in)) {
-                String value = input.nextLine();
-                if (!"y".equalsIgnoreCase(value)) {
-                    LOG.info("Deletion aborted, exit.");
-                    return;
-                }
+            if (!"y".equalsIgnoreCase(readLine())) {
+                LOG.info("Deletion aborted, exit.");
+                return;
             }
         }
         for (String k : projectKeys) {
@@ -70,11 +69,18 @@ public class SonarQubeCleanupCli {
         LOG.info("Deletion done, exit.");
     }
 
-    private static String getUserOrHideToken(String user) {
-        if (user.length() < Constant.USER_TOKEN_LENGTH_MIN) {
-            return user;
+    private static void completeConfigWithInputPassword(Config config) {
+        if (config.isLoginUserToken() || StringUtils.isNoneBlank(config.getPassword())) {
+            return;
         }
-        return "[tokenRemoved]";
+        LOG.info("SonarQube password ? : ");
+        config.setPassword(String.valueOf(readLine()));
+    }
+
+    @SuppressWarnings("resource")
+    private static String readLine() {
+        // Using System.console would be better, but no solution to mock for UT
+        return new Scanner(System.in).nextLine();
     }
 
 }

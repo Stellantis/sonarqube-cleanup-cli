@@ -23,6 +23,7 @@ public class SonarQubeCleanupCliTest extends AbstractWireMock {
 
     private static final String LOCALHOST = "http://localhost:";
     private static final String USER = "admin";
+    private static final String PASSWORD = "foobar"; // NOSONAR : UT password
 
     @Rule
     public final TextFromStandardInputStream systemInMock = emptyStandardInputStream();
@@ -37,7 +38,7 @@ public class SonarQubeCleanupCliTest extends AbstractWireMock {
     @Test
     public void testNoLineToReach() {
         mockEndoints();
-        SonarQubeCleanupCli.main(new String[] { "-h", LOCALHOST + server.port(), "-l", USER });
+        SonarQubeCleanupCli.main(new String[] { "-h", LOCALHOST + server.port(), "-l", USER, "-p", PASSWORD, });
 
         verify(0, anyRequestedFor(urlMatching(URL_COMPONENTS_SEARCH_PROJECTS)));
         verify(0, anyRequestedFor(urlMatching(URL_MEASURES_COMPONENTS)));
@@ -46,7 +47,7 @@ public class SonarQubeCleanupCliTest extends AbstractWireMock {
     @Test
     public void testOneProjectDeletion() {
         mockEndoints();
-        SonarQubeCleanupCli.main(new String[] { "-h", LOCALHOST + server.port(), "-l", USER, "-y", "-n", "1" });
+        SonarQubeCleanupCli.main(new String[] { "-h", LOCALHOST + server.port(), "-l", USER, "-p", PASSWORD, "-y", "-n", "1" });
 
         verify(1, anyRequestedFor(urlMatching(URL_COMPONENTS_SEARCH_PROJECTS)));
         verify(1, anyRequestedFor(urlMatching(URL_MEASURES_COMPONENTS)));
@@ -57,7 +58,18 @@ public class SonarQubeCleanupCliTest extends AbstractWireMock {
     public void testOneProjectDeletionWithYes() {
         mockEndoints();
         systemInMock.provideLines("y");
-        SonarQubeCleanupCli.main(new String[] { "-h", LOCALHOST + server.port(), "-l", USER, "-n", "1" });
+        SonarQubeCleanupCli.main(new String[] { "-h", LOCALHOST + server.port(), "-l", USER, "-p", PASSWORD, "-n", "1" });
+
+        verify(1, anyRequestedFor(urlMatching(URL_COMPONENTS_SEARCH_PROJECTS)));
+        verify(1, anyRequestedFor(urlMatching(URL_MEASURES_COMPONENTS)));
+        verify(1, anyRequestedFor(urlMatching(URL_PROJECTS_DELETE)));
+    }
+
+    @Test
+    public void testOneProjectDeletionWithPassword() {
+        mockEndoints();
+        systemInMock.provideLines(PASSWORD);
+        SonarQubeCleanupCli.main(new String[] { "-h", LOCALHOST + server.port(), "-l", USER, "-y", "-n", "1" });
 
         verify(1, anyRequestedFor(urlMatching(URL_COMPONENTS_SEARCH_PROJECTS)));
         verify(1, anyRequestedFor(urlMatching(URL_MEASURES_COMPONENTS)));
@@ -68,7 +80,7 @@ public class SonarQubeCleanupCliTest extends AbstractWireMock {
     public void testOneProjectDeletionWithNo() {
         mockEndoints();
         systemInMock.provideLines("N");
-        SonarQubeCleanupCli.main(new String[] { "-h", LOCALHOST + server.port(), "-l", USER, "-n", "1" });
+        SonarQubeCleanupCli.main(new String[] { "-h", LOCALHOST + server.port(), "-l", USER, "-p", PASSWORD, "-n", "1" });
 
         verify(1, anyRequestedFor(urlMatching(URL_COMPONENTS_SEARCH_PROJECTS)));
         verify(1, anyRequestedFor(urlMatching(URL_MEASURES_COMPONENTS)));
@@ -78,7 +90,7 @@ public class SonarQubeCleanupCliTest extends AbstractWireMock {
     @Test
     public void testTwoProjectDeletion() {
         mockEndoints();
-        SonarQubeCleanupCli.main(new String[] { "-h", LOCALHOST + server.port(), "-l", USER, "-y", "-n", "2000" });
+        SonarQubeCleanupCli.main(new String[] { "-h", LOCALHOST + server.port(), "-l", USER, "-p", PASSWORD, "-y", "-n", "2000" });
 
         verify(1, anyRequestedFor(urlMatching(URL_COMPONENTS_SEARCH_PROJECTS)));
         verify(2, anyRequestedFor(urlMatching(URL_MEASURES_COMPONENTS)));
@@ -88,7 +100,7 @@ public class SonarQubeCleanupCliTest extends AbstractWireMock {
     @Test
     public void testAllProjectDeletion() {
         mockEndoints();
-        SonarQubeCleanupCli.main(new String[] { "-h", LOCALHOST + server.port(), "-l", USER, "-y", "-n", "10000000" });
+        SonarQubeCleanupCli.main(new String[] { "-h", LOCALHOST + server.port(), "-l", USER, "-p", PASSWORD, "-y", "-n", "10000000" });
 
         verify(1, anyRequestedFor(urlMatching(URL_COMPONENTS_SEARCH_PROJECTS)));
         verify(9, anyRequestedFor(urlMatching(URL_MEASURES_COMPONENTS)));
@@ -111,7 +123,7 @@ public class SonarQubeCleanupCliTest extends AbstractWireMock {
     @Test
     public void testDryRun() {
         mockEndoints();
-        SonarQubeCleanupCli.main(new String[] { "-h", LOCALHOST + server.port(), "-l", USER, "-y", "-d", "-n", "1" });
+        SonarQubeCleanupCli.main(new String[] { "-h", LOCALHOST + server.port(), "-l", USER, "-p", PASSWORD, "-y", "-d", "-n", "1" });
 
         verify(1, anyRequestedFor(urlMatching(URL_COMPONENTS_SEARCH_PROJECTS)));
         verify(1, anyRequestedFor(urlMatching(URL_MEASURES_COMPONENTS)));

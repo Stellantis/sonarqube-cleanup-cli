@@ -17,20 +17,15 @@ Options:
 
 ```
 usage: sonarqube-cleanup-cli
- -d,--dryRun                 Dry run mode, no projects will be deleted
-                             (default: false).
- -h,--hostUrl <arg>          The SonarQube server URL.
- -l,--login <arg>            The login or authentication token of a
-                             SonarQube user with admin permission.
- -n,--numberLocAdd <arg>     The number of LoC in addition to retrieve
-                             (default: 0).
- -p,--password <arg>         The password that goes with the login
-                             username. This should be left blank if an
-                             authentication token is being used.
- -t,--thresholdCoeff <arg>   The multiplicative coefficient on threshold
-                             to calculate LoC to retrieve (default: 2).
- -y,--yes                    Assume projects deletion without confirmation
-                             (default: false).
+ -h,--hostUrl <arg>          The SonarQube server URL (or sysenv 'SONAR_HOST_URL').
+ -l,--login <arg>            The login or authentication token of a SonarQube user with admin permission (or sysenv 'SONAR_LOGIN').
+ -p,--password <arg>         The password that goes with the login username. This should be left blank if an authentication token is being used (or sysenv 'SONAR_PASSWORD').
+ 
+ -d,--dryRun                 Dry run mode, no projects will be deleted (default: false ; or sysenv 'SONAR_CLEANUP_DRY_RUN').
+ -y,--yes                    Assume projects deletion without confirmation (default: false ; or sysenv 'SONAR_CLEANUP_YES').
+ 
+ -n,--numberLocAdd <arg>     The number of LoC in addition to retrieve (default: 0 ; or sysenv 'SONAR_CLEANUP_NUMBER_LOC_ADD').
+ -t,--thresholdCoeff <arg>   The multiplicative coefficient on threshold to calculate LoC to retrieve (default: 2 ; or sysenv 'SONAR_CLEANUP_THRESHOLD_COEFF').
 ```
 
 ## Explanation about Line Of Code calculation for deletion

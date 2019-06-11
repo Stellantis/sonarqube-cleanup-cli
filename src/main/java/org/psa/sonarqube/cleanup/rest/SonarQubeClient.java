@@ -7,6 +7,8 @@ import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 
+import org.apache.commons.lang3.StringUtils;
+import org.psa.sonarqube.cleanup.Constant;
 import org.psa.sonarqube.cleanup.config.Config;
 import org.psa.sonarqube.cleanup.rest.model.Component;
 import org.psa.sonarqube.cleanup.rest.model.License;
@@ -24,12 +26,15 @@ public class SonarQubeClient extends AbstractClient {
         SonarQubeClient client = new SonarQubeClient();
         client.setUrl(config.getHostUrl());
         // Some API requires basicAuth (api/editions/show_license, api/measures/component), some other X-XSRF-TOKEN (api/projects/delete), so use both
-        String lp = config.getLogin() + ":" + config.getPassword();
+        String password = StringUtils.defaultIfBlank(config.getPassword(), "");
+        String lp = config.getLogin() + ":" + password;
         client.setAuthorization("Basic " + Base64.getEncoder().encodeToString(lp.getBytes()));
-        Form form = new Form();
-        form.param("login", config.getLogin());
-        form.param("password", config.getPassword());
-        client.post("api/authentication/login", form, String.class);
+        if (config.getLogin().length() < Constant.USER_TOKEN_LENGTH_MIN) {
+            Form form = new Form();
+            form.param("login", config.getLogin());
+            form.param("password", password);
+            client.post("api/authentication/login", form, String.class);
+        }
         return client;
     }
 

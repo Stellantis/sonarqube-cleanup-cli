@@ -30,6 +30,8 @@ public class SonarQubeCleanupCliTest extends AbstractWireMock {
     @Test
     public void testConstructor() {
         new SonarQubeCleanupCli(); // NOSONAR : For better code-coverage
+
+        verify(0, anyRequestedFor(urlMatching(URL_AUTHENT)));
     }
 
     @Test
@@ -87,6 +89,19 @@ public class SonarQubeCleanupCliTest extends AbstractWireMock {
     public void testAllProjectDeletion() {
         mockEndoints();
         SonarQubeCleanupCli.main(new String[] { "-h", LOCALHOST + server.port(), "-l", USER, "-y", "-n", "10000000" });
+
+        verify(1, anyRequestedFor(urlMatching(URL_COMPONENTS_SEARCH_PROJECTS)));
+        verify(9, anyRequestedFor(urlMatching(URL_MEASURES_COMPONENTS)));
+        verify(9, anyRequestedFor(urlMatching(URL_PROJECTS_DELETE)));
+    }
+
+    @Test
+    public void testUserToken() {
+        mockEndoints();
+        SonarQubeCleanupCli
+                .main(new String[] { "-h", LOCALHOST + server.port(), "-l", "0000000000000000000000000000000000000000", "-y", "-n", "10000000" });
+
+        verify(0, anyRequestedFor(urlMatching(URL_AUTHENT)));
 
         verify(1, anyRequestedFor(urlMatching(URL_COMPONENTS_SEARCH_PROJECTS)));
         verify(9, anyRequestedFor(urlMatching(URL_MEASURES_COMPONENTS)));

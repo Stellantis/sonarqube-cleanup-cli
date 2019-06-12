@@ -24,8 +24,8 @@ usage: sonarqube-cleanup-cli
  -d,--dryRun                 Dry run mode, no projects will be deleted (default: false ; or sysenv 'SONAR_CLEANUP_DRY_RUN').
  -y,--yes                    Assume projects deletion without confirmation (default: false ; or sysenv 'SONAR_CLEANUP_YES').
  
- -n,--numberLocAdd <arg>     The number of LoC in addition to retrieve (default: 0 ; or sysenv 'SONAR_CLEANUP_NUMBER_LOC_ADD').
  -t,--thresholdCoeff <arg>   The multiplicative coefficient on threshold to calculate LoC to retrieve (default: 2 ; or sysenv 'SONAR_CLEANUP_THRESHOLD_COEFF').
+ -n,--numberLocAdd <arg>     The number of LoC in addition to retrieve (default: 0 ; or sysenv 'SONAR_CLEANUP_NUMBER_LOC_ADD'). 
 ```
 
 ## Explanation about Line Of Code calculation for deletion

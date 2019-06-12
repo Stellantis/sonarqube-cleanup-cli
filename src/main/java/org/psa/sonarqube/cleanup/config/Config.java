@@ -48,7 +48,7 @@ public class Config {
     private int thresholdCoeff = 2;
     private long numberLocAdd = 0;
 
-    public Config(String[] args) {
+    public Config(String[] args) throws ParseException {
         CommandLine cmd = parseCmd(populateWithSysEnv(args));
         this.hostUrl = cmd.getOptionValue(OPTION_HOST_URL);
         this.login = cmd.getOptionValue(OPTION_LOGIN);
@@ -68,7 +68,7 @@ public class Config {
         }
     }
 
-    private static CommandLine parseCmd(String[] args) {
+    private static CommandLine parseCmd(String[] args) throws ParseException {
         Options options = new Options();
         options.addRequiredOption(OPTION_HOST_URL, "hostUrl", true, String.format(DESC_HOST_URL, SYSENV_HOST_URL));
         options.addRequiredOption(OPTION_LOGIN, "login", true, String.format(DESC_LOGIN, SYSENV_LOGIN));
@@ -83,8 +83,9 @@ public class Config {
         } catch (ParseException e) {
             HelpFormatter formatter = new HelpFormatter();
             formatter.setOptionComparator(null);
+            formatter.setWidth(200);
             formatter.printHelp("sonarqube-cleanup-cli", options);
-            throw new UnsupportedOperationException(e);
+            throw e;
         }
     }
 

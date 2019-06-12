@@ -130,6 +130,13 @@ public class SonarQubeCleanupCliTest extends AbstractWireMock {
         verify(0, anyRequestedFor(urlMatching(URL_PROJECTS_DELETE)));
     }
 
+    @Test
+    public void testErrorParsingCommand() {
+        // Should not throw exception when parsing error command
+        SonarQubeCleanupCli.main(new String[] {});
+        verify(0, anyRequestedFor(urlMatching(URL_COMPONENTS_SEARCH_PROJECTS)));
+    }
+
     private void mockEndoints() {
         stubFor(get("/api/editions/show_license").willReturn(aResponse().withHeader(HCTKEY, HCTJSON).withBodyFile("editions.show_license.json")));
         stubFor(get(urlMatching(URL_COMPONENTS_SEARCH_PROJECTS))

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang3.StringUtils;
 import org.psa.sonarqube.cleanup.config.Config;
 import org.psa.sonarqube.cleanup.rest.SonarQubeClient;
@@ -15,13 +16,21 @@ import org.slf4j.LoggerFactory;
 public class SonarQubeCleanupCli {
 
     private static final Logger LOG = LoggerFactory.getLogger(SonarQubeCleanupCli.class);
+    private static final Object LS = System.lineSeparator();
 
     SonarQubeCleanupCli() {
         super();
     }
 
     public static void main(String[] args) {
-        Config config = new Config(args);
+        Config config = null;
+        try {
+            config = new Config(args);
+        } catch (ParseException e) {
+            // When error, 'help' has been display, so error in 1 line and exit
+            LOG.error("{}Error in parsing command line ; {}{}", LS, e.getMessage(), LS);
+            return;
+        }
         LOG.info("Connecting to        : {} (user: {})", config.getHostUrl(), config.getLoginForDisplay());
         completeConfigWithInputPassword(config);
         SonarQubeClient client = SonarQubeClient.build(config);
@@ -29,7 +38,7 @@ public class SonarQubeCleanupCli {
         LOG.info("License information  : maxLoc={} / loc={} / threshold={}", license.getMaxLoc(), license.getLoc(),
                 license.getRemainingLocThreshold());
         long nLoc2Reach = LinesReachCalculator.calculateLinesToReach(config, license);
-        LOG.info("\nNumber line to reach : {} (calculated with thresholdCoeff={}, numberLinesToAdd={})", nLoc2Reach, config.getThresholdCoeff(),
+        LOG.info("{}Number line to reach : {} (calculated with thresholdCoeff={}, numberLinesToAdd={})", LS, nLoc2Reach, config.getThresholdCoeff(),
                 config.getNumberLocAdd());
         if (nLoc2Reach == 0) {
             LOG.info("No LoC to reach, exit.");
@@ -37,7 +46,7 @@ public class SonarQubeCleanupCli {
         }
 
         // Iterate on projects to delete
-        LOG.info("\nIterate on projects (loc / key / name) to delete until reaching {} lines ...", nLoc2Reach);
+        LOG.info("{}Iterate on projects (loc / key / name) to delete until reaching {} lines ...", LS, nLoc2Reach);
         List<String> projectKeys = new ArrayList<>();
         for (Component p : client.getProjectsOldMax500().getComponents()) {
             Component pd = client.getProject(p.getKey());
@@ -54,7 +63,7 @@ public class SonarQubeCleanupCli {
             return;
         }
 
-        LOG.info("\n{} project(s) will be deleted ...", projectKeys.size());
+        LOG.info("{}{} project(s) will be deleted ...", LS, projectKeys.size());
         if (!config.isYes()) {
             LOG.info("Please confirm: [y/Y]");
             if (!"y".equalsIgnoreCase(readLine())) {

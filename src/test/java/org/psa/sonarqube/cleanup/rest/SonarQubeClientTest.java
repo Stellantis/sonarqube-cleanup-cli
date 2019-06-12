@@ -13,6 +13,7 @@ import java.util.Date;
 
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.cli.ParseException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.psa.sonarqube.cleanup.AbstractWireMock;
@@ -130,8 +131,12 @@ public class SonarQubeClientTest extends AbstractWireMock {
     }
 
     private SonarQubeClient mockClient() {
-        Config config = new Config(new String[] { "-h", "http://localhost:" + server.port(), "-l", "admin" });
-        return SonarQubeClient.build(config);
+        try {
+            Config config = new Config(new String[] { "-h", "http://localhost:" + server.port(), "-l", "admin" });
+            return SonarQubeClient.build(config);
+        } catch (ParseException e) {
+            throw new UnsupportedOperationException(e);
+        }
     }
 
 }

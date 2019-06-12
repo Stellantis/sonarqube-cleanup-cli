@@ -1,5 +1,6 @@
 package org.psa.sonarqube.cleanup.config;
 
+import org.apache.commons.cli.ParseException;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -14,7 +15,7 @@ public class ConfigTest {
     public final EnvironmentVariables sysEnv = new EnvironmentVariables();
 
     @Test
-    public void testCmdParserShortMandatoryWithDefaults() {
+    public void testCmdParserShortMandatoryWithDefaults() throws ParseException {
         Config config = new Config(new String[] { "-h", HOST_LOCAL, "-l", "foo" });
         Assert.assertEquals(HOST_LOCAL, config.getHostUrl());
         Assert.assertEquals("foo", config.getLogin());
@@ -28,7 +29,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void testCmdParserLongMandatoryWithDefaults() {
+    public void testCmdParserLongMandatoryWithDefaults() throws ParseException {
         Config config = new Config(new String[] { "-hostUrl", HOST_LOCAL, "-login", "foo" });
         Assert.assertEquals(HOST_LOCAL, config.getHostUrl());
         Assert.assertEquals("foo", config.getLogin());
@@ -40,7 +41,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void testCmdParserShortComplete() {
+    public void testCmdParserShortComplete() throws ParseException {
         Config config = new Config(new String[] { "-h", HOST_LOCAL, "-l", "foo", "-p", "bar", "-d", "-y", "-t", "1", "-n", "2" });
         Assert.assertEquals(HOST_LOCAL, config.getHostUrl());
         Assert.assertEquals("foo", config.getLogin());
@@ -52,19 +53,19 @@ public class ConfigTest {
     }
 
     @Test
-    public void testCmdParserUserToken() {
+    public void testCmdParserUserToken() throws ParseException {
         Config config = new Config(new String[] { "-h", HOST_LOCAL, "-l", "0000000000000000000000000000000000000000" });
         Assert.assertEquals("[tokenHidden]", config.getLoginForDisplay());
         Assert.assertTrue(config.isLoginUserToken());
     }
 
     @Test(expected = UnsupportedOperationException.class)
-    public void testCmdParserUserTokenAndPassword() {
+    public void testCmdParserUserTokenAndPassword() throws ParseException {
         new Config(new String[] { "-h", HOST_LOCAL, "-l", "0000000000000000000000000000000000000000", "-p", "somePass" });
     }
 
     @Test
-    public void testCmdParserSysEnvComplete() {
+    public void testCmdParserSysEnvComplete() throws ParseException {
         sysEnv.set("SONAR_HOST_URL", HOST_COMPANY);
         sysEnv.set("SONAR_LOGIN", "admin");
         sysEnv.set("SONAR_PASSWORD", "password");
@@ -84,14 +85,14 @@ public class ConfigTest {
     }
 
     @Test
-    public void testCmdParserSysEnvSomeEmpty() {
+    public void testCmdParserSysEnvSomeEmpty() throws ParseException {
         sysEnv.set("SONAR_HOST_URL", "");
         Config config = new Config(new String[] { "-h", HOST_LOCAL, "-l", "foo" });
         Assert.assertEquals(HOST_LOCAL, config.getHostUrl());
     }
 
     @Test
-    public void testCmdParserLongComplete() {
+    public void testCmdParserLongComplete() throws ParseException {
         Config config = new Config(new String[] { "-hostUrl", HOST_LOCAL, "-login", "foo", "-password", "bar", "-dryRun", "-yes", "-thresholdCoeff",
                 "1", "-numberLocAdd", "2" });
         Assert.assertEquals(HOST_LOCAL, config.getHostUrl());
@@ -103,23 +104,23 @@ public class ConfigTest {
         Assert.assertEquals(2, config.getNumberLocAdd());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void testBadCmdParserBadArg() {
+    @Test(expected = ParseException.class)
+    public void testBadCmdParserBadArg() throws ParseException {
         new Config(new String[] { "-h", HOST_LOCAL, "-l", "foo", "--notExist" });
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void testBadCmdParserNull() {
+    @Test(expected = ParseException.class)
+    public void testBadCmdParserNull() throws ParseException {
         new Config(null);
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void testBadCmdParserEmptyArray() {
+    @Test(expected = ParseException.class)
+    public void testBadCmdParserEmptyArray() throws ParseException {
         new Config(new String[] {});
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void testBadCmdParserEmptyStr() {
+    @Test(expected = ParseException.class)
+    public void testBadCmdParserEmptyStr() throws ParseException {
         new Config(new String[] { "" });
     }
 

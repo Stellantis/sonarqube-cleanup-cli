@@ -42,7 +42,7 @@ Two options can be configured to customize behavior, depends the needs ; mainly 
 
 The combination of both could be done. Think to configure the threshold in `http://sonarqube.company.com/admin/extension/license/app` with your needs. 
 
-**Sample**: Your license is 100 millions LoC and you want 1 million of limit (for new big project), but keep the email if limit prior to thousand (in case of problem, if cron program is not correctly executed):
+**Sample**: Your license is 100 millions LoC and you want 1 million of limit (for new big project), but keep the email if limit prior to one hundred thousand (in case of problem, if cron program is not correctly executed):
 
 - Configure your SonarQube threshold to 100000.
 - Configure *numberLocAdd* option to 800000 and let *thresholdCoeff* to 2 (default value): `100000 x 2 + 800000 = 1000000`

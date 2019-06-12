@@ -82,6 +82,7 @@ public class Config {
             return parser.parse(options, args);
         } catch (ParseException e) {
             HelpFormatter formatter = new HelpFormatter();
+            formatter.setOptionComparator(null);
             formatter.printHelp("sonarqube-cleanup-cli", options);
             throw new UnsupportedOperationException(e);
         }

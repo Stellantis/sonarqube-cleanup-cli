@@ -1,11 +1,14 @@
 
 package org.psa.sonarqube.cleanup.rest;
 
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.List;
 
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
 import org.psa.sonarqube.cleanup.config.Config;
@@ -14,6 +17,9 @@ import org.psa.sonarqube.cleanup.rest.model.License;
 import org.psa.sonarqube.cleanup.rest.model.SearchProjects;
 
 public class SonarQubeClient extends AbstractClient {
+
+    private static final List<Response.Status> PROJECT_DELETION_SUPPORTED_STATUS = Arrays.asList(Response.Status.NO_CONTENT,
+            Response.Status.BAD_GATEWAY);
 
     private String authorization;
 
@@ -60,7 +66,7 @@ public class SonarQubeClient extends AbstractClient {
         // 'api/projects/bulk_delete' not used because could be a little bit dangerous ...
         Form form = new Form();
         form.param("project", key);
-        post("api/projects/delete", getHeadersAuthorization(), form, String.class);
+        post("api/projects/delete", getHeadersAuthorization(), form, String.class, PROJECT_DELETION_SUPPORTED_STATUS);
     }
 
 }

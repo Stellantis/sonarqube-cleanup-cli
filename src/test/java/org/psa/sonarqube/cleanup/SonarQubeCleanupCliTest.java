@@ -15,6 +15,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.TextFromStandardInputStream;
 
+import com.github.tomakehurst.wiremock.stubbing.Scenario;
+
 public class SonarQubeCleanupCliTest extends AbstractWireMock {
 
     private static final String URL_COMPONENTS_SEARCH_PROJECTS = "/api/components/search_projects.*";
@@ -108,6 +110,25 @@ public class SonarQubeCleanupCliTest extends AbstractWireMock {
     }
 
     @Test
+    public void testAllProjectDeletionWith502() {
+        mockEndoints(true, true, true, false);
+
+        stubFor(post(urlMatching(URL_PROJECTS_DELETE)).inScenario("http-502").whenScenarioStateIs(Scenario.STARTED).willSetStateTo("http-502-error")
+                .willReturn(aResponse().withStatus(Response.Status.NO_CONTENT.getStatusCode())));
+        stubFor(post(urlMatching(URL_PROJECTS_DELETE)).inScenario("http-502").whenScenarioStateIs("http-502-error")
+                .willSetStateTo("http-502-continue")
+                .willReturn(aResponse().withStatus(Response.Status.BAD_GATEWAY.getStatusCode()).withBodyFile("502.html")));
+        stubFor(post(urlMatching(URL_PROJECTS_DELETE)).inScenario("http-502").whenScenarioStateIs("http-502-continue")
+                .willSetStateTo("http-502-continue").willReturn(aResponse().withStatus(Response.Status.NO_CONTENT.getStatusCode())));
+
+        SonarQubeCleanupCli.main(new String[] { "-h", LOCALHOST + server.port(), "-l", USER, "-p", PASSWORD, "-y", "-n", "10000000" });
+
+        verify(1, anyRequestedFor(urlMatching(URL_COMPONENTS_SEARCH_PROJECTS)));
+        verify(9, anyRequestedFor(urlMatching(URL_MEASURES_COMPONENTS)));
+        verify(9, anyRequestedFor(urlMatching(URL_PROJECTS_DELETE)));
+    }
+
+    @Test
     public void testUserToken() {
         mockEndoints();
         SonarQubeCleanupCli
@@ -138,11 +159,24 @@ public class SonarQubeCleanupCliTest extends AbstractWireMock {
     }
 
     private void mockEndoints() {
-        stubFor(get("/api/editions/show_license").willReturn(aResponse().withHeader(HCTKEY, HCTJSON).withBodyFile("editions.show_license.json")));
-        stubFor(get(urlMatching(URL_COMPONENTS_SEARCH_PROJECTS))
-                .willReturn(aResponse().withHeader(HCTKEY, HCTJSON).withBodyFile("components.search_projects.json")));
-        stubFor(get(urlMatching(URL_MEASURES_COMPONENTS))
-                .willReturn(aResponse().withHeader(HCTKEY, HCTJSON).withBodyFile("measures.component.1.json")));
-        stubFor(post(urlMatching(URL_PROJECTS_DELETE)).willReturn(aResponse().withStatus(Response.Status.NO_CONTENT.getStatusCode())));
+        mockEndoints(true, true, true, true);
+    }
+
+    private void mockEndoints(boolean apiEditionsShowLicense, boolean apiComponentsSearchProjects, boolean apiMeasuresComponent,
+            boolean apiProjectsDelete) {
+        if (apiEditionsShowLicense) {
+            stubFor(get("/api/editions/show_license").willReturn(aResponse().withHeader(HCTKEY, HCTJSON).withBodyFile("editions.show_license.json")));
+        }
+        if (apiComponentsSearchProjects) {
+            stubFor(get(urlMatching(URL_COMPONENTS_SEARCH_PROJECTS))
+                    .willReturn(aResponse().withHeader(HCTKEY, HCTJSON).withBodyFile("components.search_projects.json")));
+        }
+        if (apiMeasuresComponent) {
+            stubFor(get(urlMatching(URL_MEASURES_COMPONENTS))
+                    .willReturn(aResponse().withHeader(HCTKEY, HCTJSON).withBodyFile("measures.component.1.json")));
+        }
+        if (apiProjectsDelete) {
+            stubFor(post(urlMatching(URL_PROJECTS_DELETE)).willReturn(aResponse().withStatus(Response.Status.NO_CONTENT.getStatusCode())));
+        }
     }
 }

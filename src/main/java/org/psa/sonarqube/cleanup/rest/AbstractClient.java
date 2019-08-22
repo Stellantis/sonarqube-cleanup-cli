@@ -3,6 +3,8 @@ package org.psa.sonarqube.cleanup.rest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -38,28 +40,36 @@ public abstract class AbstractClient {
     }
 
     protected <T> T get(String path, MultivaluedMap<String, Object> headers, Class<T> entityResponse) {
-        return call(path, headers, null, entityResponse, false);
+        return call(path, headers, null, entityResponse, null, false);
     }
 
     protected <T> T get(String path, MultivaluedMap<String, Object> headers, Class<T> entityResponse, boolean wrapRoot) {
-        return call(path, headers, null, entityResponse, wrapRoot);
+        return call(path, headers, null, entityResponse, null, wrapRoot);
     }
 
     protected <T> T post(String path, Object entityRequest, Class<T> entityResponse) {
-        return post(path, null, entityRequest, entityResponse);
+        return post(path, null, entityRequest, entityResponse, null);
     }
 
-    protected <T> T post(String path, MultivaluedMap<String, Object> headers, Object entityRequest, Class<T> entityResponse) {
-        return call(path, headers, entityRequest, entityResponse, false);
+    protected <T> T post(String path, MultivaluedMap<String, Object> headers, Object entityRequest, Class<T> entityResponse,
+            List<Response.Status> additionalsStatusSupported) {
+        return call(path, headers, entityRequest, entityResponse, additionalsStatusSupported, false);
     }
 
-    private <T> T call(String path, MultivaluedMap<String, Object> headers, Object entityRequest, Class<T> entityResponse, boolean wrapRoot) {
+    private <T> T call(String path, MultivaluedMap<String, Object> headers, Object entityRequest, Class<T> entityResponse,
+            List<Response.Status> additionalsStatusSupported, boolean wrapRoot) {
         long start = System.currentTimeMillis();
         try {
             LOG.debug("Call URL: {}/{}", url, path);
             if (StringUtils.isBlank(url)) {
                 throw new UnsupportedOperationException("Please use 'setUrl(...)' before using this client");
             }
+            List<Response.Status> status = new ArrayList<>();
+            status.add(Response.Status.OK);
+            if (additionalsStatusSupported != null) {
+                status.addAll(additionalsStatusSupported);
+            }
+            LOG.debug("Supported reponse status: {}", status);
 
             Client client = ClientBuilder.newClient();
             if (wrapRoot) {
@@ -88,7 +98,7 @@ public abstract class AbstractClient {
             } else {
                 response = invocationBuilder.post(Entity.entity(entityRequest, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
             }
-            if (Response.Status.OK.getStatusCode() != response.getStatus() && Response.Status.NO_CONTENT.getStatusCode() != response.getStatus()) {
+            if (!status.contains(Response.Status.fromStatusCode(response.getStatus()))) {
                 String content = IOUtils.toString((InputStream) response.getEntity(), Charset.defaultCharset());
                 if (StringUtils.isNoneBlank(content)) {
                     content = " / Content: " + content;

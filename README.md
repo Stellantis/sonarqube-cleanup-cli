@@ -62,11 +62,12 @@ For development/SNAPSHOT build, use:
 mvn package
 ```
 
-For release build, use (you will have to fill your GitHub credentials):
+For release build, use (GitHub credentials specially required on command line if [2FA](https://help.github.com/en/articles/configuring-two-factor-authentication) used):
+
 ```
 git reset --hard origin/master 
 git branch -m next-version 
-mvn -B clean release:clean release:prepare
+mvn -B clean release:clean release:prepare -Dusername=yourGitHubLogin -Dpassword=yourGitHubToken
 ```
 
 After that, you would have to create pull-request from `next-version` branch and rebase it on master for next version development.

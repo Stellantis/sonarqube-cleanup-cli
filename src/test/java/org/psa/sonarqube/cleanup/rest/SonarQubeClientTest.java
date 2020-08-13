@@ -68,8 +68,8 @@ public class SonarQubeClientTest extends AbstractWireMock {
 
     @Test
     public void testNoUrl() {
+        SonarQubeClient client = new SonarQubeClient();
         try {
-            SonarQubeClient client = new SonarQubeClient();
             client.getLicence();
             Assert.fail("URL not set");
         } catch (UnsupportedOperationException e) {

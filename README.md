@@ -1,5 +1,5 @@
 
-[![Build Status](https://travis-ci.org/GroupePSA/sonarqube-cleanup-cli.svg?branch=master)](https://travis-ci.org/GroupePSA/sonarqube-cleanup-cli) [![SonarCloud Status](https://sonarcloud.io/api/project_badges/measure?project=org.psa%3Asonarqube-cleanup-cli&metric=alert_status)](https://sonarcloud.io/dashboard?id=org.psa%3Asonarqube-cleanup-cli) [ ![Download](https://api.bintray.com/packages/groupepsa/generic/sonarqube-cleanup-cli/images/download.svg) ](https://bintray.com/groupepsa/generic/sonarqube-cleanup-cli/_latestVersion#files) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Development version: [ ![download](https://api.bintray.com/packages/groupepsa/generic-dev/sonarqube-cleanup-cli/images/download.svg) ](https://bintray.com/groupepsa/generic-dev/sonarqube-cleanup-cli/_latestVersion#files)
+[![Build Status](https://travis-ci.org/GroupePSA/sonarqube-cleanup-cli.svg?branch=master)](https://travis-ci.org/GroupePSA/sonarqube-cleanup-cli) [![SonarCloud Status](https://sonarcloud.io/api/project_badges/measure?project=org.psa%3Asonarqube-cleanup-cli&metric=alert_status)](https://sonarcloud.io/dashboard?id=org.psa%3Asonarqube-cleanup-cli)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[![Download](https://img.shields.io/github/v/release/GroupePSA/sonarqube-cleanup-cli)](https://github.com/GroupePSA/sonarqube-cleanup-cli/releases/latest)
 
 # SonarQube old projects Cleanup command line client
 
@@ -9,7 +9,9 @@ This is a simple java cli program to remove old [SonarQube](https://www.sonarqub
 
 *Prerequisite: [java](https://www.java.com/fr/download/) should be installed and on your PATH.*
 
-Extract ZIP file depending your environment system, run `sonarqube-cleanup-cli.bat` (Windows) or `sonarqube-cleanup-cli.sh` (Linux) with options.
+Download `sonarqube-cleanup-cli-x.y.zip` ZIP file from [releases](https://github.com/GroupePSA/sonarqube-cleanup-cli/releases) (or SNAPSHOT from [packages](https://github.com/orgs/GroupePSA/packages?repo_name=sonarqube-cleanup-cli)) and extract it.
+
+Depending your environment system, run `sonarqube-cleanup-cli.bat` (Windows) or `sonarqube-cleanup-cli.sh` (Linux) with options.
 
 At min `sonarqube-cleanup-cli.[sh|bat] -h http://sonarqube.company.com -l adminUser -p foobar`
 

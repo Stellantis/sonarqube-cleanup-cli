@@ -1,5 +1,5 @@
 
-[![Build Status](https://travis-ci.org/GroupePSA/sonarqube-cleanup-cli.svg?branch=master)](https://travis-ci.org/GroupePSA/sonarqube-cleanup-cli) [![SonarCloud Status](https://sonarcloud.io/api/project_badges/measure?project=org.psa%3Asonarqube-cleanup-cli&metric=alert_status)](https://sonarcloud.io/dashboard?id=org.psa%3Asonarqube-cleanup-cli)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[![Download](https://img.shields.io/github/v/release/GroupePSA/sonarqube-cleanup-cli)](https://github.com/GroupePSA/sonarqube-cleanup-cli/releases/latest)
+[![Build Status](https://github.com/GroupePSA/sonarqube-cleanup-cli/workflows/Development%20Build/badge.svg)](https://github.com/GroupePSA/sonarqube-cleanup-cli/actions?query=workflow%3A%22Development+Build%22) [![SonarCloud Status](https://sonarcloud.io/api/project_badges/measure?project=org.psa%3Asonarqube-cleanup-cli&metric=alert_status)](https://sonarcloud.io/dashboard?id=org.psa%3Asonarqube-cleanup-cli)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[![Download](https://img.shields.io/github/v/release/GroupePSA/sonarqube-cleanup-cli)](https://github.com/GroupePSA/sonarqube-cleanup-cli/releases/latest)
 
 # SonarQube old projects Cleanup command line client
 

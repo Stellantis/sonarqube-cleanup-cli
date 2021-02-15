@@ -4,7 +4,7 @@ on:
     branches:
     - master
 jobs:
-  Build-Aanalyse-Publish:
+  Build-Analyse-Publish:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2

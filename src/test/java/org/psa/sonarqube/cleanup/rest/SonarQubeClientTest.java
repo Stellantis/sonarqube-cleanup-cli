@@ -106,7 +106,7 @@ public class SonarQubeClientTest extends AbstractWireMock {
 
     @Test
     public void testComponentDetail() {
-        stubFor(get(urlEqualTo("/api/measures/component?metricKeys=ncloc&componentKey=com.company%3Aproject1"))
+        stubFor(get(urlEqualTo("/api/measures/component?metricKeys=ncloc&component=com.company%3Aproject1"))
                 .willReturn(aResponse().withHeader(HCTKEY, HCTJSON).withBodyFile("measures.component.1.json")));
         SonarQubeClient client = mockClient();
         Component project = client.getProject(PROJECT_KEY);
@@ -119,7 +119,7 @@ public class SonarQubeClientTest extends AbstractWireMock {
 
     @Test
     public void testComponentDetailNoLoC() {
-        stubFor(get(urlEqualTo("/api/measures/component?metricKeys=ncloc&componentKey=com.company%3Aproject1"))
+        stubFor(get(urlEqualTo("/api/measures/component?metricKeys=ncloc&component=com.company%3Aproject1"))
                 .willReturn(aResponse().withHeader(HCTKEY, HCTJSON).withBodyFile("measures.component.0.json")));
         SonarQubeClient client = mockClient();
         Component project = client.getProject(PROJECT_KEY);

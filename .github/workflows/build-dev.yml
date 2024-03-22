@@ -40,4 +40,4 @@ jobs:
     - name: Deploy Snapshot (without test, already executed)
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: mvn -B deploy -DskipTests -DaltDeploymentRepository=github::default::https://maven.pkg.github.com/GroupePSA/sonarqube-cleanup-cli
+      run: mvn -B deploy -DskipTests -DaltDeploymentRepository=github::default::https://maven.pkg.github.com/Stellantis/sonarqube-cleanup-cli

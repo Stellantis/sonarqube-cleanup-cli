@@ -37,4 +37,4 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.organization=psa -Dsonar.host.url=https://sonarcloud.io
+      run: mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.organization=psa -Dsonar.projectKey=Stellantis_sonarqube-cleanup-cli -Dsonar.host.url=https://sonarcloud.io

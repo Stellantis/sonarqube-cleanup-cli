@@ -59,7 +59,7 @@ public class SonarQubeClient extends AbstractClient {
     }
 
     public Component getProject(String key) {
-        return get("api/measures/component?metricKeys=ncloc&componentKey=" + key, getHeadersAuthorization(), Component.class, true);
+        return get("api/measures/component?metricKeys=ncloc&component=" + key, getHeadersAuthorization(), Component.class, true);
     }
 
     public void deleteProject(String key) {
